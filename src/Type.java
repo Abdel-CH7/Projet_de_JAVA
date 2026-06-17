@@ -56,24 +56,21 @@ class Type{
     // Exemple :
     // Type.getEspece(94) doit retourner "Ectoplasma"
     public static String getEspece(int numPokedex){
-    	// TODO
-    	return new String();
+        return espece[numPokedex - 1];
     }
 
     // Doit retourner une chaine de caractères contenant le nom du type en fonction de son indice (comprendre constantes qui défini le type).
     // Exemple :
     // Type.getNomType(Type.EAU) doit retourner "eau"
     public static String getNomType(int type){
-    	// TODO
-	return new String();
+        return nomsType[type].toLowerCase();
     }
 
     // Doit retourner l'efficacité lorsqu'un pokemon de type typeAtt attaque un pokemon de type typeDef.
     // Exemple :
     // Type.getEfficacite(Type.EAU, Type.FEU) doit retourner Type.SUPER_EFFICACE
     public static double getEfficacite(int typeAtt, int typeDef){
-    	// TODO
-	return NEUTRE;
+        return efficacite[typeAtt][typeDef];
     }
 
     // Doit retourner l'indice du type passé en apramètre sous forme de chaine de caractère.
@@ -81,7 +78,11 @@ class Type{
     // Type.getIndiceType("spectre") doit retourner Type.SPECTRE ou 13 plus simplement.
     // Attention à la casse ! 
     public static int getIndiceType(String type){
-	// TODO
+        for (int i = 0; i < nomsType.length; i++) {
+            if (nomsType[i].equalsIgnoreCase(type)) {
+                return i;
+            }
+        }
 	return -1;
     }
 }

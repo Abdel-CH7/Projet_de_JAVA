@@ -5,19 +5,17 @@ import java.io.IOException;
 public class Pokemon {
     private int numPokedex;
     private String nom;
-    private int hp;
-    private int hpMax; 
-    private int attaque;
-    private int defense;
+    private int pv;         
+    private int pvMax;
     private int vitesse;
     private int type1;
     private int type2;
 
-    public Pokemon(String nom, int hp, int attaque, int defense, int vitesse, int type1, int type2) {
+    public Pokemon(String nom, int pv, int attaque, int defense, int vitesse, int type1, int type2) {
         this.numPokedex = 0;
         this.nom = nom;
-        this.hpMax = hp;
-        this.hp = hp; 
+        this.pvMax = pv;
+        this.pv = pv; 
         this.attaque = attaque;
         this.defense = defense;
         this.vitesse = vitesse;
@@ -27,10 +25,8 @@ public class Pokemon {
 
     public String getNom() { return nom; }
     public int getNumPokedex() { return numPokedex; }
-    public int getHp() { return hp; }
-    public int getHpMax() { return hpMax; }
-    public int getPv() { return hp; }
-    public int getPvMax() { return hpMax; }
+    public int getPv() { return pv; }
+    public int getPvMax() { return pvMax; }
     public int getAttaque() { return attaque; }
     public int getDefense() { return defense; }
     public int getVitesse() { return vitesse; }
@@ -60,8 +56,8 @@ public class Pokemon {
                             this.type2 = Type.SANS;
                         }
                         
-                        this.hpMax = Integer.parseInt(colonnes[4]); 
-                        this.hp = this.hpMax;
+                        this.pvMax = Integer.parseInt(colonnes[4]); 
+                        this.pv = this.pvMax;                       
                         this.attaque = Integer.parseInt(colonnes[5]);
                         this.defense = Integer.parseInt(colonnes[6]);
                         this.vitesse = Integer.parseInt(colonnes[7]);
@@ -73,5 +69,71 @@ public class Pokemon {
         } catch (IOException e) {
             System.out.println("Erreur de lecture du fichier CSV: " + e.getMessage());
         }
+    }
+
+    public boolean estKO() { return this.pv <= 0; }
+    public boolean estVivant() { return !estKO(); }
+    public void soigner() { this.pv = this.pvMax; }
+
+    public String toString() { 
+        return this.nom + " (PV: " + this.pv + "/" + this.pvMax + ")"; 
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Pokemon autre = (Pokemon) obj;
+        return this.nom.equals(autre.nom) && this.pvMax == autre.pvMax;
+    }
+
+    public void attaque(Pokemon adversaire) {
+        Pokemon premier = this;
+        Pokemon second = adversaire;
+        
+        if (adversaire.getVitesse() > this.getVitesse()) {
+            premier = adversaire;
+            second = this;
+        }
+        System.out.println("--- " + premier.getNom() + " est le plus rapide et attaque en premier ! ---");
+        
+        frapper(premier, second);
+
+        if (!second.estKO()) {
+            System.out.println("--- " + second.getNom() + " contre-attaque ! ---");
+            frapper(second, premier);
+        } else {
+            System.out.println(second.getNom() + " est K.O. ! Il ne peut pas contre-attaquer.");
+        }
+    }
+
+    private void frapper(Pokemon attaquant, Pokemon defenseur) {
+        double efficacite1 = Type.getEfficacite(attaquant.getType1(), defenseur.getType1());
+        double efficacite2 = 1.0;
+        
+        if (defenseur.getType2() != Type.SANS) {
+            efficacite2 = Type.getEfficacite(attaquant.getType1(), defenseur.getType2());
+        }
+        
+        double multiplicateurTotal = efficacite1 * efficacite2;
+        
+        int degats = (int) (attaquant.getAttaque() * multiplicateurTotal) - (defenseur.getDefense() / 2);
+        
+        if (degats < 1) {
+            degats = 1;
+        }
+
+        if (multiplicateurTotal > 1) {
+            System.out.println("C'est très efficace !");
+        } else if (multiplicateurTotal < 1) {
+            System.out.println("Ce n'est pas très efficace...");
+        }
+        
+        System.out.println(attaquant.getNom() + " inflige " + degats + " dégâts à " + defenseur.getNom() + ".");
+
+        defenseur.pv = defenseur.pv - degats;
+        if (defenseur.pv < 0) {
+            defenseur.pv = 0; 
+        }        
+        System.out.println("Il reste " + defenseur.getPv() + " PV à " + defenseur.getNom() + ".\n");
     }
 }

@@ -3,6 +3,9 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Pokemon {
+
+    private static final String CHEMIN_CSV = "ressources/pokedex_gen1.csv";
+
     private int numPokedex;
     private String nom;
     private int pv;         
@@ -13,8 +16,8 @@ public class Pokemon {
     private int type1;
     private int type2;
 
-    public Pokemon(String nom, int pv, int attaque, int defense, int vitesse, int type1, int type2) {
-        this.numPokedex = 0;
+    public Pokemon(int numPokedex, String nom, int pv, int attaque, int defense, int vitesse, int type1, int type2) {
+        this.numPokedex = numPokedex;
         this.nom = nom;
         this.pvMax = pv;
         this.pv = pv; 
@@ -34,6 +37,11 @@ public class Pokemon {
     public int getVitesse() { return vitesse; }
     public int getType1() { return type1; }
     public int getType2() { return type2; }
+
+    public Pokemon(int numPokedex, String surnom) {
+        this(numPokedex, surnom, CHEMIN_CSV);
+    }
+
 
     public Pokemon(int numPokedex, String surnom, String cheminCSV) {
         this.numPokedex = numPokedex;

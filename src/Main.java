@@ -5,8 +5,8 @@ public class Main {
         System.out.println("==================================================");
 
         System.out.println("[INFO] Chargement des données depuis ressources/pokedex_gen1.csv...");
-        Pokemon bulbi = new Pokemon(1, "Bulbizarre", "ressources/pokedex_gen1.csv");
-        Pokemon salameche = new Pokemon(4, "Salamèche", "ressources/pokedex_gen1.csv");
+        Pokemon bulbi = new Pokemon(1, "Bulbizarre");
+        Pokemon salameche = new Pokemon(4, "Salamèche");
 
         System.out.println("\n[STATISTIQUES INITIALES]");
         System.out.println(bulbi.toString());

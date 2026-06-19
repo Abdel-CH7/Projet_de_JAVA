@@ -7,6 +7,8 @@ public class Pokemon {
     private String nom;
     private int pv;         
     private int pvMax;
+    private int attaque;    
+    private int defense;    
     private int vitesse;
     private int type1;
     private int type2;

@@ -4,6 +4,7 @@ import MG2D.geometrie.Rectangle;
 import MG2D.geometrie.Point;
 import MG2D.geometrie.Texture;
 import MG2D.geometrie.Texte;
+import MG2D.Souris;
 import java.awt.Font;
 
 public class JeuPokemon {
@@ -102,5 +103,55 @@ public class JeuPokemon {
         }
         
         fenetre.rafraichir();
+
+        Souris souris = fenetre.getSouris();
+        int tourJoueur = 1;
+        boolean pokemonSelectionne = false;
+        int selectX = -1;
+        int selectY = -1;
+        Rectangle carreSelection = null;
+
+        while (true) {
+
+            if (souris.getClicGauche()) {
+                Point clic = souris.getPosition();
+
+                int caseX = (int) (clic.getX() / tailleCase);
+                int caseY = (int) (clic.getY() / tailleCase);
+
+                if (caseX >= 0 && caseX < nbCases && caseY >= 0 && caseY < nbCases) {
+                    int proprietaire = plateauLogique.getProprietaire(caseX, caseY);
+                    Pokemon pClic = plateauLogique.getPokemon(caseX, caseY);
+
+                    if (!pokemonSelectionne) {
+                        if (proprietaire == tourJoueur && pClic != null && pClic.estVivant()) {
+                            selectX = caseX;
+                            selectY = caseY;
+                            pokemonSelectionne = true;
+
+                            if (carreSelection != null) {
+                                fenetre.supprimer(carreSelection);
+                            }
+                            carreSelection = new Rectangle(Couleur.ROUGE, new Point(selectX * tailleCase, selectY * tailleCase), tailleCase, tailleCase, false);
+                            fenetre.ajouter(carreSelection);
+                        }
+                    } else {
+                        if (carreSelection != null) {
+                            fenetre.supprimer(carreSelection);
+                            carreSelection = null;
+                        }
+
+                        if (caseX == selectX && caseY == selectY) {
+                            pokemonSelectionne = false;
+                        }
+                    }
+                    fenetre.rafraichir();
+                }
+            }
+        }
+
+
+
+
     }
 }

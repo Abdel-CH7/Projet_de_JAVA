@@ -143,7 +143,40 @@ public class JeuPokemon {
 
                         if (caseX == selectX && caseY == selectY) {
                             pokemonSelectionne = false;
-                        }
+                        } else {
+                            int distX = Math.abs(caseX - selectX);
+                            int distY = Math.abs(caseY - selectY);
+
+                            if (distX <= 1 && distY <= 1) {
+                                Pokemon attaquant = plateauLogique.getPokemon(selectX, selectY);
+
+                                if (proprietaire == 0) { 
+                                    plateauLogique.deplacer(selectX, selectY, caseX, caseY);
+
+                                    String img = plateauChemins[selectX][selectY];
+                                    plateauChemins[caseX][caseY] = img;
+                                    plateauChemins[selectX][selectY] = null;
+
+                                    fenetre.supprimer(plateauVisuel[selectX][selectY]);
+                                    Texture nouvelleTex = new Texture(img, new Point(caseX * tailleCase, caseY * tailleCase), tailleCase, tailleCase);
+                                    plateauVisuel[caseX][caseY] = nouvelleTex;
+                                    plateauVisuel[selectX][selectY] = null;
+                                    fenetre.ajouter(nouvelleTex);
+
+                                    fenetre.supprimer(plateauPV[selectX][selectY]);
+                                    Texte nvPV = new Texte(Couleur.NOIR, attaquant.getPv() + "/" + attaquant.getPvMax(), policePV, new Point(caseX * tailleCase + (tailleCase / 2), caseY * tailleCase + 12));
+                                    plateauPV[caseX][caseY] = nvPV;
+                                    plateauPV[selectX][selectY] = null;
+                                    fenetre.ajouter(nvPV);
+
+                                    tourJoueur = (tourJoueur == 1) ? 2 : 1;
+                                    uiTour.setTexte("TOUR : JOUEUR " + tourJoueur);
+                                    uiTour.setCouleur((tourJoueur == 1) ? Couleur.BLEU : Couleur.ROUGE);
+                                    pokemonSelectionne = false;
+
+                                }
+                            }
+                        }                       
                     }
                     fenetre.rafraichir();
                 }

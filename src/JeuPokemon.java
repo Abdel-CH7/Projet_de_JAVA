@@ -174,7 +174,76 @@ public class JeuPokemon {
                                     uiTour.setCouleur((tourJoueur == 1) ? Couleur.BLEU : Couleur.ROUGE);
                                     pokemonSelectionne = false;
 
+                                } else if (proprietaire != tourJoueur) { 
+                                    Pokemon defenseur = plateauLogique.getPokemon(caseX, caseY);
+                                    attaquant.attaque(defenseur);
+
+                                    if (!defenseur.estVivant()) {
+                                        fenetre.supprimer(plateauVisuel[caseX][caseY]);
+                                        fenetre.supprimer(plateauPV[caseX][caseY]);
+                                        plateauVisuel[caseX][caseY] = null;
+                                        plateauPV[caseX][caseY] = null;
+
+                                        plateauLogique.deplacer(selectX, selectY, caseX, caseY);
+                                        
+                                        String img = plateauChemins[selectX][selectY];
+                                        plateauChemins[caseX][caseY] = img;
+                                        plateauChemins[selectX][selectY] = null;
+
+                                        fenetre.supprimer(plateauVisuel[selectX][selectY]);
+                                        Texture nouvelleTex = new Texture(img, new Point(caseX * tailleCase, caseY * tailleCase), tailleCase, tailleCase);
+                                        plateauVisuel[caseX][caseY] = nouvelleTex;
+                                        plateauVisuel[selectX][selectY] = null;
+                                        fenetre.ajouter(nouvelleTex);
+
+                                        fenetre.supprimer(plateauPV[selectX][selectY]);
+                                        Texte nvPVAtt = new Texte(Couleur.NOIR, attaquant.getPv() + "/" + attaquant.getPvMax(), policePV, new Point(caseX * tailleCase + (tailleCase / 2), caseY * tailleCase + 12));
+                                        plateauPV[caseX][caseY] = nvPVAtt;
+                                        plateauPV[selectX][selectY] = null;
+                                        fenetre.ajouter(nvPVAtt);
+
+                                        if (defenseur.getNom().equalsIgnoreCase("Mewtwo")) {
+                                            Texte victoire = new Texte(Couleur.VERT, "VICTOIRE J" + tourJoueur + " !", policeVictoire, new Point((nbCases * tailleCase) / 2, (nbCases * tailleCase) / 2));
+                                            fenetre.ajouter(victoire);
+                                            fenetre.rafraichir();
+                                            try { Thread.sleep(7000); } catch (InterruptedException e) {}
+                                            System.exit(0);
+                                        }
+                                    } else {
+                                        fenetre.supprimer(plateauPV[caseX][caseY]);
+                                        Texte nvPVDef = new Texte(Couleur.NOIR, defenseur.getPv() + "/" + defenseur.getPvMax(), policePV, new Point(caseX * tailleCase + (tailleCase / 2), caseY * tailleCase + 12));
+                                        plateauPV[caseX][caseY] = nvPVDef;
+                                        fenetre.ajouter(nvPVDef);
+                                    }
+
+                                    if (!attaquant.estVivant()) {
+                                        if (plateauVisuel[selectX][selectY] != null) {
+                                            fenetre.supprimer(plateauVisuel[selectX][selectY]);
+                                            fenetre.supprimer(plateauPV[selectX][selectY]);
+                                            plateauVisuel[selectX][selectY] = null;
+                                            plateauPV[selectX][selectY] = null;
+                                            plateauChemins[selectX][selectY] = null;
+                                        }
+                                        plateauLogique.placerPokemon(null, 0, selectX, selectY);
+                                    } else if (defenseur.estVivant()) {
+                                        fenetre.supprimer(plateauPV[selectX][selectY]);
+                                        Texte nvPVAtt = new Texte(Couleur.NOIR, attaquant.getPv() + "/" + attaquant.getPvMax(), policePV, new Point(selectX * tailleCase + (tailleCase / 2), selectY * tailleCase + 12));
+                                        plateauPV[selectX][selectY] = nvPVAtt;
+                                        fenetre.ajouter(nvPVAtt);
+                                    }
+
+                                    tourJoueur = (tourJoueur == 1) ? 2 : 1;
+                                    uiTour.setTexte("TOUR : JOUEUR " + tourJoueur);
+                                    uiTour.setCouleur((tourJoueur == 1) ? Couleur.BLEU : Couleur.ROUGE);
+                                    pokemonSelectionne = false;
+
+                                } else {
+                                    carreSelection = new Rectangle(Couleur.ROUGE, new Point(selectX * tailleCase, selectY * tailleCase), tailleCase, tailleCase, false);
+                                    fenetre.ajouter(carreSelection);
                                 }
+                            } else {
+                                carreSelection = new Rectangle(Couleur.ROUGE, new Point(selectX * tailleCase, selectY * tailleCase), tailleCase, tailleCase, false);
+                                fenetre.ajouter(carreSelection);
                             }
                         }                       
                     }
@@ -182,9 +251,5 @@ public class JeuPokemon {
                 }
             }
         }
-
-
-
-
     }
 }

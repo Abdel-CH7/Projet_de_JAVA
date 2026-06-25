@@ -23,6 +23,7 @@ public class JeuPokemon {
 
         Font policeTour = new Font("Arial", Font.BOLD, 22);
         Font policePV = new Font("Arial", Font.BOLD, 12);
+        Font policeVictoire = new Font("Arial", Font.BOLD, 40);
 
 
         Texte uiTour = new Texte(Couleur.BLEU, "TOUR : JOUEUR 1", policeTour, new Point((nbCases * tailleCase) / 2, (nbCases * tailleCase) + 25));
@@ -61,8 +62,8 @@ public class JeuPokemon {
                 if (p != null) {
                     plateauLogique.placerPokemon(p, 1, i, j);
                     
-                    plateauChemins[i][j] = "images/" + idActuel + ".png";
-                    Texture tex = new Texture("images/" + idActuel + ".png", new Point(i * tailleCase, j * tailleCase), tailleCase, tailleCase);
+                    plateauChemins[i][j] = "ressources/images/" + idActuel + ".png";
+                    Texture tex = new Texture("ressources/images/" + idActuel + ".png", new Point(i * tailleCase, j * tailleCase), tailleCase, tailleCase);
                     plateauVisuel[i][j] = tex;
                     fenetre.ajouter(tex);
 
@@ -90,8 +91,8 @@ public class JeuPokemon {
                 if (p != null) {
                     plateauLogique.placerPokemon(p, 2, i, j);
                     
-                    plateauChemins[i][j] = "images/" + idActuel + ".png";
-                    Texture tex = new Texture("images/" + idActuel + ".png", new Point(i * tailleCase, j * tailleCase), tailleCase, tailleCase);
+                    plateauChemins[i][j] = "ressources/images/" + idActuel + ".png";
+                    Texture tex = new Texture("ressources/images/" + idActuel + ".png", new Point(i * tailleCase, j * tailleCase), tailleCase, tailleCase);
                     plateauVisuel[i][j] = tex;
                     fenetre.ajouter(tex);
 
@@ -112,6 +113,8 @@ public class JeuPokemon {
         Rectangle carreSelection = null;
 
         while (true) {
+            try { Thread.sleep(20); } catch (InterruptedException e) {}
+
 
             if (souris.getClicGauche()) {
                 Point clic = souris.getPosition();
@@ -202,7 +205,7 @@ public class JeuPokemon {
                                         plateauPV[selectX][selectY] = null;
                                         fenetre.ajouter(nvPVAtt);
 
-                                        if (defenseur.getNom().equalsIgnoreCase("Mewtwo")) {
+                                        if (defenseur.getNumPokedex() == 150) {
                                             Texte victoire = new Texte(Couleur.VERT, "VICTOIRE J" + tourJoueur + " !", policeVictoire, new Point((nbCases * tailleCase) / 2, (nbCases * tailleCase) / 2));
                                             fenetre.ajouter(victoire);
                                             fenetre.rafraichir();
@@ -217,6 +220,23 @@ public class JeuPokemon {
                                     }
 
                                     if (!attaquant.estVivant()) {
+                                        if (attaquant.getNumPokedex() == 150) {
+                                            int gagnant = (tourJoueur == 1) ? 2 : 1;
+
+                                            Texte victoire = new Texte(
+                                                Couleur.VERT,
+                                                "VICTOIRE J" + gagnant + " !",
+                                                policeVictoire,
+                                                new Point((nbCases * tailleCase) / 2, (nbCases * tailleCase) / 2)
+                                            );
+                                            fenetre.ajouter(victoire);
+                                            fenetre.rafraichir();
+
+                                            try { Thread.sleep(7000); } catch (InterruptedException e) {}
+                                            
+                                            System.exit(0);
+                                        }
+
                                         if (plateauVisuel[selectX][selectY] != null) {
                                             fenetre.supprimer(plateauVisuel[selectX][selectY]);
                                             fenetre.supprimer(plateauPV[selectX][selectY]);

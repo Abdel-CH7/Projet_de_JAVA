@@ -40,7 +40,7 @@ public class JeuPokemon {
                 if (nx >= 0 && nx < Plateau.TAILLE && ny >= 0 && ny < Plateau.TAILLE) {
                     int proprietaireCase = plateauLogique.getProprietaire(nx, ny);
 
-                    if (proprietaireCase == 0 || proprietaireCase != tourJoueur) {
+                    if (proprietaireCase != tourJoueur) {
                         Couleur couleurCercle = (proprietaireCase == 0) ? Couleur.NOIR : Couleur.ROUGE;
                         
                         Cercle cercle = new Cercle( couleurCercle, new Point(nx * tailleCase + tailleCase / 2, ny * tailleCase + tailleCase / 2), tailleCase / 2 - 10, false);
@@ -236,6 +236,7 @@ public class JeuPokemon {
                                         plateauVisuel[caseX][caseY] = null;
                                         plateauPV[caseX][caseY] = null;
 
+                                        plateauLogique.placerPokemon(null, 0, caseX, caseY);
                                         plateauLogique.deplacer(selectX, selectY, caseX, caseY);
                                         
                                         String img = plateauChemins[selectX][selectY];

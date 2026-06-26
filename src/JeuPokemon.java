@@ -6,8 +6,53 @@ import MG2D.geometrie.Texture;
 import MG2D.geometrie.Texte;
 import MG2D.Souris;
 import java.awt.Font;
+import MG2D.geometrie.Cercle;
+import java.util.ArrayList;
 
 public class JeuPokemon {
+    private static void supprimerCercles(Fenetre fenetre, ArrayList<Cercle> cerclesPossibles) {
+        for (int i = 0; i < cerclesPossibles.size(); i++) {
+            fenetre.supprimer(cerclesPossibles.get(i));
+        }
+        cerclesPossibles.clear();
+    }
+
+    private static void afficherCerclesPossibles(
+        Fenetre fenetre,
+        ArrayList<Cercle> cerclesPossibles,
+        Plateau plateauLogique,
+        int x,
+        int y,
+        int tourJoueur,
+        int tailleCase
+    ) {
+        supprimerCercles(fenetre, cerclesPossibles);
+
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx == 0 && dy == 0) {
+                    continue;
+                }
+
+                int nx = x + dx;
+                int ny = y + dy;
+
+                if (nx >= 0 && nx < Plateau.TAILLE && ny >= 0 && ny < Plateau.TAILLE) {
+                    int proprietaireCase = plateauLogique.getProprietaire(nx, ny);
+
+                    if (proprietaireCase == 0 || proprietaireCase != tourJoueur) {
+                        Couleur couleurCercle = (proprietaireCase == 0) ? Couleur.NOIR : Couleur.ROUGE;
+                        
+                        Cercle cercle = new Cercle( couleurCercle, new Point(nx * tailleCase + tailleCase / 2, ny * tailleCase + tailleCase / 2), tailleCase / 2 - 10, false);
+
+                        cerclesPossibles.add(cercle);
+                        fenetre.ajouter(cercle);
+                    }
+                } 
+            }
+        }
+    }       
+    
     public static void main(String[] args) {
         int tailleCase = 80;
         int nbCases = Plateau.TAILLE;
@@ -112,6 +157,8 @@ public class JeuPokemon {
         int selectY = -1;
         Rectangle carreSelection = null;
 
+        ArrayList<Cercle> cerclesPossibles = new ArrayList<Cercle>();
+
         while (true) {
             try { Thread.sleep(20); } catch (InterruptedException e) {}
 
@@ -137,12 +184,14 @@ public class JeuPokemon {
                             }
                             carreSelection = new Rectangle(Couleur.ROUGE, new Point(selectX * tailleCase, selectY * tailleCase), tailleCase, tailleCase, false);
                             fenetre.ajouter(carreSelection);
+                            afficherCerclesPossibles(fenetre, cerclesPossibles, plateauLogique, selectX, selectY, tourJoueur, tailleCase);
                         }
                     } else {
                         if (carreSelection != null) {
                             fenetre.supprimer(carreSelection);
                             carreSelection = null;
                         }
+                        supprimerCercles(fenetre, cerclesPossibles);
 
                         if (caseX == selectX && caseY == selectY) {
                             pokemonSelectionne = false;
@@ -260,10 +309,12 @@ public class JeuPokemon {
                                 } else {
                                     carreSelection = new Rectangle(Couleur.ROUGE, new Point(selectX * tailleCase, selectY * tailleCase), tailleCase, tailleCase, false);
                                     fenetre.ajouter(carreSelection);
+                                    afficherCerclesPossibles(fenetre, cerclesPossibles, plateauLogique, selectX, selectY, tourJoueur, tailleCase);
                                 }
                             } else {
                                 carreSelection = new Rectangle(Couleur.ROUGE, new Point(selectX * tailleCase, selectY * tailleCase), tailleCase, tailleCase, false);
                                 fenetre.ajouter(carreSelection);
+                                afficherCerclesPossibles(fenetre, cerclesPossibles, plateauLogique, selectX, selectY, tourJoueur, tailleCase);
                             }
                         }                       
                     }

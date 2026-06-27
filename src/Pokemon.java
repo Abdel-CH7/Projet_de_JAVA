@@ -16,6 +16,10 @@ public class Pokemon {
     private int type1;
     private int type2;
 
+    public Pokemon() {
+        this(25, "Pikachu");
+    }
+    
     public Pokemon(int numPokedex, String nom, int pv, int attaque, int defense, int vitesse, int type1, int type2) {
         this.numPokedex = numPokedex;
         this.nom = nom;
@@ -126,8 +130,14 @@ public class Pokemon {
         
         double multiplicateurTotal = efficacite1 * efficacite2;
         
-        int degats = (int) (attaquant.getAttaque() * multiplicateurTotal) - (defenseur.getDefense() / 2);
+        int degats = attaquant.getAttaque() - defenseur.getDefense();
         
+        if (degats < 1) {
+            degats = 1;
+        }
+
+        degats = (int) (degats * multiplicateurTotal);
+
         if (degats < 1) {
             degats = 1;
         }
